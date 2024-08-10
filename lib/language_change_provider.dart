@@ -13,6 +13,8 @@ class LanguageChangeProvider with ChangeNotifier {
     Locale('fr'), // Spanish
   ];
 
+
+
   LanguageChangeProvider() {
     _currentLocale = getLocaleFromLocaleName(Platform.localeName);
     debugPrint(

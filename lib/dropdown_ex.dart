@@ -11,9 +11,9 @@ import 'language_change_provider.dart';
 
 // DropdownMenuEntry labels and values for the first dropdown menu.
 enum LanguageLabel {
-  blue('english', Colors.blue, 'en'),
-  pink('francais', Colors.pink, 'fr'),
-  green('espaniol', Colors.green, 'es'),
+  en('english', Colors.blue, 'en'),
+  fr('francais', Colors.pink, 'fr'),
+  es('espaniol', Colors.green, 'es'),
   ;
 
   const LanguageLabel(this.label, this.color, this.localeName);
@@ -21,18 +21,30 @@ enum LanguageLabel {
   final String label;
   final Color color;
   final String localeName;
+
+  @override
+  String toString() => 'MyEnum(localeName: $localeName, name: $name)';
+}
+
+LanguageLabel? findInEnum(String targetLocaleName) {
+  var ll =  LanguageLabel.values.where((e) => e.localeName == targetLocaleName);
+  if (ll.isNotEmpty) {
+    return ll.first;
+  }
 }
 
 class DropdownLanguageMenu extends StatefulWidget {
   DropdownLanguageMenu({
     super.key,
     required this.callback,
+    required this.initialLocaleName,
   });
 
   @override
   State<DropdownLanguageMenu> createState() => _DropdownLanguageMenuState();
 
   Function callback;
+  String initialLocaleName;
 }
 
 class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
@@ -40,6 +52,7 @@ class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
   final TextEditingController iconController = TextEditingController();
   LanguageLabel? selectedLanguage;
   String _localeName = 'en';
+
 
  void  setDropDownLocale(LanguageLabel label) {
     setState(() {
@@ -50,6 +63,7 @@ class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
 
   @override
   Widget build(BuildContext context) {
+    LanguageLabel initialSelection = findInEnum(widget.initialLocaleName)?? LanguageLabel.fr;
     return Column(
       children: <Widget>[
         Padding(
@@ -58,7 +72,7 @@ class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               DropdownMenu<LanguageLabel>(
-                initialSelection: LanguageLabel.green,
+                initialSelection: initialSelection,
                 controller: langController,
                 // requestFocusOnTap is enabled/disabled by platforms when it is null.
                 // On mobile platforms, this is false by default. Setting this to true will

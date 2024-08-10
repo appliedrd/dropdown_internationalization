@@ -8,8 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // #enddocregion localization-delegates-import
 
-
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'dropdown_ex.dart';
 import 'language_change_provider.dart';
@@ -17,14 +15,17 @@ import 'language_change_provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp((
+  runApp((MultiProvider(
+    providers: [
       ChangeNotifierProvider(
         // Initialize the model in the builder. That way, Provider
         // can own cart's lifecycle, making sure to call `dispose`
         // when not needed anymore.
         create: (context) => LanguageChangeProvider(),
-        child: MyApp(),
-      )));
+      )
+    ],
+    child: MyApp(),
+  )));
 }
 
 class MyApp extends StatefulWidget {
@@ -40,6 +41,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     // #docregion material-app
+    Locale _locale = Provider.of<LanguageChangeProvider>(context, listen: true)
+        .currentLocale;
     return MaterialApp(
       title: 'Localizations Sample App',
       localizationsDelegates: const [
@@ -50,56 +53,62 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: LanguageChangeProvider.SupportedLocales,
 
-       locale: Provider.of<LanguageChangeProvider>(context, listen: true).currentLocale,
-     // locale: _locale,
-      home: const MyHomePage(),
+      //locale: Provider.of<LanguageChangeProvider>(context, listen: true).currentLocale,
+      locale: _locale,
+      home: MyHomePage(initialLocaleName: _locale.languageCode),
     );
     // #enddocregion material-app
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({
+    super.key,
+    required this.initialLocaleName,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+
+  final String initialLocaleName;
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   dropdown_callback(String newLang) {
-    debugPrint("newLang $newLang ");  // use await
-   context.read<LanguageChangeProvider>().changeLocale(newLang);
+    debugPrint("newLang $newLang "); // use await
+    context.read<LanguageChangeProvider>().changeLocale(newLang);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(AppLocalizations.of(context)!.hello('John')),
+        title: Text(AppLocalizations.of(context)!.hello('John')),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-                      Text(AppLocalizations.of(context)!.helloWorld),
-                      Text(AppLocalizations.of(context)!.zipperhead),
-                      // Returns 'Hello John'
-                      Text(AppLocalizations.of(context)!.hello('John')),
-                      // Returns 'no wombats'
-                      Text(AppLocalizations.of(context)!.nWombats(0)),
-                      // Returns '1 wombat'
-                      Text(AppLocalizations.of(context)!.nWombats(1)),
-                      // Returns '5 wombats'
-                      Text(AppLocalizations.of(context)!.nWombats(5)),
-                      CalendarDatePicker(
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                        onDateChanged: (value) {},
-                      ),
-                       DropdownLanguageMenu(callback: dropdown_callback,),
+            Text(AppLocalizations.of(context)!.helloWorld),
+            Text(AppLocalizations.of(context)!.zipperhead),
+            // Returns 'Hello John'
+            Text(AppLocalizations.of(context)!.hello('John')),
+            // Returns 'no wombats'
+            Text(AppLocalizations.of(context)!.nWombats(0)),
+            // Returns '1 wombat'
+            Text(AppLocalizations.of(context)!.nWombats(1)),
+            // Returns '5 wombats'
+            Text(AppLocalizations.of(context)!.nWombats(5)),
+            CalendarDatePicker(
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime(2100),
+              onDateChanged: (value) {},
+            ),
+            DropdownLanguageMenu(
+              initialLocaleName: widget.initialLocaleName,
+              callback: dropdown_callback,
+            ),
           ],
         ),
       ),
