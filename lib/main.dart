@@ -14,6 +14,19 @@ import 'package:provider/provider.dart';
 import 'dropdown_ex.dart';
 import 'language_change_provider.dart';
 
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp((
+      ChangeNotifierProvider(
+        // Initialize the model in the builder. That way, Provider
+        // can own cart's lifecycle, making sure to call `dispose`
+        // when not needed anymore.
+        create: (context) => LanguageChangeProvider(),
+        child: MyApp(),
+      )));
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -92,17 +105,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp((
-  ChangeNotifierProvider(
-    // Initialize the model in the builder. That way, Provider
-    // can own cart's lifecycle, making sure to call `dispose`
-    // when not needed anymore.
-    create: (context) => LanguageChangeProvider(),
-    child: MyApp(),
-  )));
 }
