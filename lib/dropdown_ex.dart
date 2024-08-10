@@ -54,7 +54,7 @@ class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
   String _localeName = 'en';
 
 
- void  setDropDownLocale(LanguageLabel label) {
+  void  setDropDownLocale(LanguageLabel label) {
     setState(() {
       _localeName = label.localeName;
     });
@@ -64,48 +64,40 @@ class _DropdownLanguageMenuState extends State<DropdownLanguageMenu> {
   @override
   Widget build(BuildContext context) {
     LanguageLabel initialSelection = findInEnum(widget.initialLocaleName)?? LanguageLabel.fr;
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              DropdownMenu<LanguageLabel>(
-                initialSelection: initialSelection,
-                controller: langController,
-                // requestFocusOnTap is enabled/disabled by platforms when it is null.
-                // On mobile platforms, this is false by default. Setting this to true will
-                // trigger focus request on the text field and virtual keyboard will appear
-                // afterward. On desktop platforms however, this defaults to true.
-                requestFocusOnTap: true,
-                label: const Text('Language'),
-                onSelected: (LanguageLabel? lang) {
-                  setState(() {
-                    selectedLanguage = lang;
-                  });
-                  widget.callback(selectedLanguage!.localeName);
-                },
-                dropdownMenuEntries: LanguageLabel.values
-                    .map<DropdownMenuEntry<LanguageLabel>>(
-                        (LanguageLabel color) {
-                  return DropdownMenuEntry<LanguageLabel>(
-                    value: color,
-                    label: color.label,
-                    enabled: color.label != 'Grey',
-                    style: MenuItemButton.styleFrom(
-                      foregroundColor: color.color,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+    return SizedBox(
+      height: 40,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child:
+        DropdownMenu<LanguageLabel>(
+          initialSelection: initialSelection,
+          controller: langController,
+          // requestFocusOnTap is enabled/disabled by platforms when it is null.
+          // On mobile platforms, this is false by default. Setting this to true will
+          // trigger focus request on the text field and virtual keyboard will appear
+          // afterward. On desktop platforms however, this defaults to true.
+          requestFocusOnTap: true,
+          label: const Text('Language'),
+          onSelected: (LanguageLabel? lang) {
+            setState(() {
+              selectedLanguage = lang;
+            });
+            widget.callback(selectedLanguage!.localeName);
+          },
+          dropdownMenuEntries: LanguageLabel.values
+              .map<DropdownMenuEntry<LanguageLabel>>(
+                  (LanguageLabel color) {
+                return DropdownMenuEntry<LanguageLabel>(
+                  value: color,
+                  label: color.label,
+                  enabled: color.label != 'Grey',
+                  style: MenuItemButton.styleFrom(
+                    foregroundColor: color.color,
+                  ),
+                );
+              }).toList(),
         ),
-        if (selectedLanguage != null)
-          Text('You selected a ${selectedLanguage?.label}')
-       else const Text('Please select a language .')
-      ],
+      ),
     );
   }
 }
